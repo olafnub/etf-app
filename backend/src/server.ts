@@ -25,6 +25,7 @@ app.get('/health', (req, res) => {
 app.get('/api/nav-prices', async (req, res) => {
   try {
     const { nav, prices} = await calculateNAV({ BTC: 1, ETH: 1});
+    console.log("In")
     res.json({ nav, prices });
   } catch (error) {
     console.error('Error fetching prices:', error);

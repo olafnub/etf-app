@@ -43,11 +43,11 @@ NODE_ENV=test
 - `pnpm build` - Build the project
 - `pnpm start` - Build and serve the production version
 
-### Testing
+### Testing (depcrecated)
 - `pnpm test` - Run tests with coverage
 - `pnpm test:watch` - Run tests in watch mode
 
-### Code Quality
+### Code Quality (depcrecated)
 - `pnpm lint` - Run ESLint
 - `pnpm lint:fix` - Fix ESLint issues automatically
 - `pnpm check` - Type check without emitting files
