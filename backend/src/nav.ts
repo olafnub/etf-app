@@ -8,7 +8,8 @@ export async function calculateNAV(holdings: {BTC: number, ETH: number}) {
 
   // NAV = total USD value of all assets / total ETF token supply. Ex: Asset = BTC + ETH prices
   // Token Supply, ERC-20 with mint/burn based on NAV
-  const tokenSupply = 2000 // TODO: Call an api to get this?
+  // TODO: Call an api to get this? READ: totalSupply(), free cost
+  const tokenSupply = 2000
   const nav = (holdings.BTC * prices.BTC + holdings.ETH * prices.ETH) / tokenSupply;
   
   return { nav, prices };
