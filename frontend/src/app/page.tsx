@@ -76,7 +76,7 @@ export default function Home() {
         <div className="w-full lg:w-3/5 h-1/2 lg:h-full">
           {/* <p>Price: ${money(layer1Details.etfPrice)}</p>
           <p>Value: {money(layer1Details.etfValue)}</p> */}
-          <p>Market Cap: {money(layer1Details.totalMarketCap)}</p>
+          <p>Market Cap Combined: {money(layer1Details.totalMarketCap)}</p>
           {/* <TradingGraph /> */}
 
           {/* Investment Calculator */}
