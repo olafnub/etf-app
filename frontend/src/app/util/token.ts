@@ -1,5 +1,4 @@
 import layer1 from "../placeholder/layer1.json";
-import cmc100 from "../placeholder/cmc100.json";
 import layer1details from "../placeholder/layer1details.json";
 
 const COINMARKETURL = "https://pro-api.coinmarketcap.com";
@@ -16,6 +15,7 @@ export interface TokensDetail {
   id: number;
   symbol: string;
   name: string;
+  tags?: string[];
   quote: {
     USD: {
       price: number;
@@ -47,16 +47,16 @@ export async function fetchLayer1Data(): Promise<TokensData> {
     // console.log(CMC100_LATEST[0])
 
     const LAYER1_TOKENS = CMC100_LATEST.filter(
-        (token: any) => token.tags?.includes("layer-1")
+        (token: TokensDetail) => token.tags?.includes("layer-1")
       );
       
     const calculateTotalMarketCap = LAYER1_TOKENS.reduce(
-        (sum: number, token: any) => sum + (token.quote?.USD?.market_cap || 0),
+        (sum: number, token: TokensDetail) => sum + (token.quote?.USD?.market_cap || 0),
         0
     );
 
     // Calculate ETF distribution and price
-    const distribution: ETFConstituent[] = LAYER1_TOKENS.map((token: any) => ({
+    const distribution: ETFConstituent[] = LAYER1_TOKENS.map((token: TokensDetail) => ({
       id: token.id,
       name: token.name,
       symbol: token.symbol,

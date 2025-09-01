@@ -2,7 +2,6 @@
 'use client';
 
 import TokenList from '../components/TokenList';
-import TradingGraph from '../components/TradingGraph';
 import { useState, useEffect } from 'react';
 import { 
   fetchLayer1Data, 
@@ -11,10 +10,7 @@ import {
 import { money } from './util/number';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('layer1');
-  // const [layer1Tokens, setLayer1Tokens] = useState<Token[]>(FALLBACK_LAYER1);
   const [loading, setLoading] = useState(true);
-  const [etfData, setEtfData] = useState(null);
   const [investmentAmount, setInvestmentAmount] = useState('');
 
   const layer1Details = FALLBACK_LAYER1DETAILS;

@@ -39,7 +39,6 @@ export default function TradingGraph({ title = "CMC100", data = sampleData }: Tr
   const currentPrice = prices[prices.length - 1];
   const previousPrice = prices[0];
   const priceChange = currentPrice - previousPrice;
-  const percentChange = (priceChange / previousPrice) * 100;
   
   // Generate SVG path for the line chart
   const generatePath = () => {
