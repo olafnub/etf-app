@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { useState } from "react";
-import { Token } from "../app/util/token";
+import { TokensDetail } from "../app/util/token";
 
 interface TokenListProps {
-  tokens: Token[];
+  tokens: TokensDetail[];
   title: string;
 }
 
