@@ -1,4 +1,8 @@
 {
     "token": "bitcoin",
-    "date": "1/1/2024"
+    "startDate": "1/1/2024",
+    "endDate": "09/01/2025",
+    "monthPrices": [
+        98.12, 138.83
+    ]
 }
