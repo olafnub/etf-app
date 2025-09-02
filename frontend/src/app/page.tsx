@@ -8,6 +8,7 @@ import {
   FALLBACK_LAYER1, FALLBACK_LAYER1DETAILS 
 } from './util/token';
 import { money } from './util/number';
+import TradingGraph from "../components/TradingGraph";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -17,12 +18,10 @@ export default function Home() {
   
   // Calculate distribution based on investment amount
   const calculateDistribution = (amount: number) => {
-    if (!amount || amount <= 0) return [];
-    
     return layer1Details.distribution.map(token => ({
       ...token,
-      investmentAmount: (amount * token.weight) / 100,
-      tokenQuantity: (amount * token.weight) / 100 / token.price
+      investmentAmount: amount > 0 ? (amount * token.weight) / 100 : 0,
+      tokenQuantity: amount > 0 ? (amount * token.weight) / 100 / token.price : 0
     }));
   };
 
@@ -45,7 +44,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen p-4 lg:p-6 bg-gray-900">
+    <main className="min-h-screen p-4 lg:p-6 bg-gray-900" suppressHydrationWarning>
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 h-screen">
         {/* Token List - 2/5 of the screen on desktop, full width on mobile */}
         <div className="w-full lg:w-2/5 h-1/2 lg:h-full overflow-y-auto">
@@ -65,18 +64,18 @@ export default function Home() {
           
           {/* Token List Content */}
           {loading ? (
-            <div className="flex items-center justify-center h-64">
+            <div className="flex items-center justify-center">
               <div className="text-white">Loading tokens...</div>
             </div>
           ) : (
-            <TokenList tokens={layer1Details.tokensDetail} title="Layer 1 Tokens" />
+            <TokenList tokens={layer1Details.tokensDetail} title="Layer 1 Token Fund" />
           )}
         </div>
         
         <div className="w-full lg:w-3/5 h-1/2 lg:h-full">
           {/* <p>Price: ${money(layer1Details.etfPrice)}</p>
           <p>Value: {money(layer1Details.etfValue)}</p> */}
-          <p>Market Cap Combined: {money(layer1Details.totalMarketCap)}</p>
+          {/* <p>Market Cap Combined: {money(layer1Details.totalMarketCap)}</p> */}
           {/* <TradingGraph /> */}
 
           {/* Investment Calculator */}
@@ -93,34 +92,31 @@ export default function Home() {
             </div>
             
             {/* Distribution Results */}
-            {investmentAmount && parseFloat(investmentAmount) > 0 && (
-              <div className="mt-4">
-                <h4 className="text-white font-medium mb-2">Asset Distribution:</h4>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {distribution.slice(0, 10).map((token) => (
-                    <div key={token.id} className="flex justify-between items-center text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{token.symbol}</span>
-                        <span className="text-gray-400">({token.weight.toFixed(2)}%)</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-white">${money(token.investmentAmount)}</div>
-                        <div className="text-gray-400 text-xs">
-                          {token.tokenQuantity.toFixed(6)} {token.symbol}
-                        </div>
+            <div className="mt-4">
+              <h4 className="text-white font-medium mb-2">Asset Distribution:</h4>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {distribution.map((token) => (
+                  <div key={token.id} className="flex justify-between items-center text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-medium">{token.symbol}</span>
+                      <span className="text-gray-400">({token.weight.toFixed(2)}%)</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white">${money(token.investmentAmount)}</div>
+                      <div className="text-gray-400 text-xs">
+                        {token.tokenQuantity.toFixed(6)} {token.symbol}
                       </div>
                     </div>
-                  ))}
-                  {distribution.length > 10 && (
-                    <div className="text-gray-400 text-xs text-center pt-2 border-t border-gray-700">
-                      +{distribution.length - 10} more assets
-                    </div>
-                  )}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
           </div>
+          {/* <h3 className="text-2xl font-bold mb-6 text-white">Market Cap Combined: {money(layer1Details.totalMarketCap)}</h3> */}
+          <h3 className="text-2xl font-bold mb-6 text-white">Market Cap Combined: $3.2 trillion usd</h3>
+          <TradingGraph />
         </div>
+        
         
       </div>
     </main>

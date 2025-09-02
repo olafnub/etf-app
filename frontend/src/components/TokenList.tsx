@@ -9,7 +9,7 @@ interface TokenListProps {
 export default function TokenList({ tokens, title }: TokenListProps) {
   return (
     <div className="w-full h-full bg-gray-900 rounded-lg p-6">
-      <h1 className="text-2xl font-bold mb-6 text-white">{title}</h1>
+      <h3 className="text-2xl font-bold mb-6 text-white">{title}</h3>
       
       <div className="space-y-3">
         {tokens.map((token, index) => (
