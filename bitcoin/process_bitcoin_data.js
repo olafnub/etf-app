@@ -1,4 +1,4 @@
-// curl -s "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365" > bitcoin_recent.json
+// curl -s "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=610" > bitcoin_recent.json
 // node process_bitcoin_data.js
 
 const fs = require('fs');
