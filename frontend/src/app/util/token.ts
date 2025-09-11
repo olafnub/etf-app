@@ -1,5 +1,6 @@
 import layer1 from "../placeholder/layer1.json";
 import layer1details from "../placeholder/layer1details.json";
+import cmc100 from "../placeholder/cmc100.json";
 
 const COINMARKETURL = "https://pro-api.coinmarketcap.com";
 
@@ -84,3 +85,4 @@ export async function fetchLayer1Data(): Promise<TokensData> {
 // Fallback data
 export const FALLBACK_LAYER1 = layer1;
 export const FALLBACK_LAYER1DETAILS = layer1details;
+export const FALLBACK_CMC100 = cmc100;

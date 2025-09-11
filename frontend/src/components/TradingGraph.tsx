@@ -187,14 +187,14 @@ export default function TradingGraph({ title = "Bitcoin & CMC100" }: TradingGrap
 
   if (loading) {
     return (
-      <div className="w-full h-full bg-gray-900 rounded-lg p-6 flex items-center justify-center">
+      <div className="w-full bg-gray-900 rounded-lg p-6 flex items-center justify-center">
         <div className="text-white">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-gray-900 rounded-lg p-6">
+    <div className="w-full bg-gray-900 rounded-lg p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
