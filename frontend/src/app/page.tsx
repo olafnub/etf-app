@@ -9,9 +9,9 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="text-sm font-medium tracking-tight opacity-80">opi.trade</div>
           <nav className="hidden items-center gap-6 text-sm md:flex">
-            <a href="#" className="opacity-80 transition-opacity hover:opacity-100">Learn More</a>
+            <a href="https://youtu.be/mScpHTIi-kM?si=fOJJskls2g3BZE7Z" className="opacity-80 transition-opacity hover:opacity-100">Thesis article soon...</a>
             <a
-              href="#"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSf_AMuiV8nQ_Yi4Ey1Eq30l8RTE0yswDkhbJPOwdB_x8ziTfg/viewform?usp=header"
               className="rounded-full bg-[var(--color-primary)] px-4 py-2 font-medium text-black transition-colors hover:bg-[var(--color-primary-300)]"
             >
               Join the Community
@@ -57,31 +57,31 @@ export default function Home() {
 // Server Action: sends email to your inbox via Resend
 async function subscribe(formData: FormData) {
   "use server";
-  return { ok: true };
+  // return { ok: true };
 
-  // const email = String(formData.get("email") || "").trim();
-  // if (!email) return { ok: false };
+  const email = String(formData.get("email") || "").trim();
+  if (!email) return { ok: false };
 
-  // const resendApiKey = process.env.NEXT_PUBLIC_RESEND_API_KEY;
-  // const toEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ""; // set your inbox
-  // if (!resendApiKey || !toEmail) {
-  //   console.warn("Missing RESEND_API_KEY or CONTACT_EMAIL env var");
-  //   return { ok: false };
-  // }
+  const resendApiKey = process.env.NEXT_PUBLIC_RESEND_API_KEY;
+  const toEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ""; // set your inbox
+  if (!resendApiKey || !toEmail) {
+    console.warn("Missing RESEND_API_KEY or CONTACT_EMAIL env var");
+    return { ok: false };
+  }
 
-  // const resend = new Resend(resendApiKey);
-  // try {
-  //   await resend.emails.send({
-  //     from: "opi.trade <noreply@updates.opi.trade>",
-  //     to: toEmail,
-  //     subject: "New waitlist signup",
-  //     text: `New subscriber: ${email}`,
-  //   });
-  //   return { ok: true };
-  // } catch (error) {
-  //   console.error("Resend error", error);
-  //   return { ok: false };
-  // }
+  const resend = new Resend(resendApiKey);
+  try {
+    await resend.emails.send({
+      from: "opi.trade <noreply@updates.opi.trade>",
+      to: toEmail,
+      subject: "New waitlist signup",
+      text: `New subscriber: ${email}`,
+    });
+    return { ok: true };
+  } catch (error) {
+    console.error("Resend error", error);
+    return { ok: false };
+  }
 }
 
 // Server reducer compatible with useFormState

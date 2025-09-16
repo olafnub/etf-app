@@ -47,9 +47,9 @@ export default function SubscribeForm({ action }: { action: SubscribeAction }) {
           {/* modal content */}
           <div className="relative z-10 w-[90%] max-w-sm rounded-2xl border border-white/10 
                           bg-[var(--color-primary)]/90 backdrop-blur-md p-6 text-left shadow-xl">
-            <h3 className="text-lg font-semibold text-white">You're on the list 🎉</h3>
+            <h3 className="text-lg font-semibold text-white">You&apos;re on the list 🎉</h3>
             <p className="mt-2 text-sm text-white/80">
-              Appreciate you joining, and we'll email you when we launch.
+              Appreciate you joining, and we&apos;ll email you when we launch.
             </p>
             <div className="mt-6 flex justify-end">
               <button
