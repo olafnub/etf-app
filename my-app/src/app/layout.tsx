@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 };
 
 const links: { label: string; path: string }[] = [
-  // More links...
   { label: 'About Us', path: '/about' },
   { label: 'Support', path: '/support' },
 ]

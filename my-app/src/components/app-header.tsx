@@ -1,11 +1,14 @@
 'use client';
 import { usePathname } from 'next/navigation'
 import Link from 'next/link';
+import { ThemeSelect } from '@/components/theme-select';
+import { useState } from 'react';
 
 import { ConnectWallet } from '@/components/connect-wallet';
 
 export function AppHeader( {links = []} : { links: { label: string; path: string }[] }) {
     const pathname = usePathname()
+    // const [showMenu, setShowMenu] = useState(false);
 
     function isActive(path: string) {
         return path === '/' ? pathname === '/' : pathname.startsWith(path)
@@ -20,7 +23,6 @@ export function AppHeader( {links = []} : { links: { label: string; path: string
                     </Link>
                     <div className="hidden md:flex items-center">
                         <ul className="flex gap-4 flex-nowrap items-center">
-                            <ConnectWallet />
                             {links.map(({ label, path }) => (
                             <li key={path}>
                                 <Link
@@ -31,19 +33,17 @@ export function AppHeader( {links = []} : { links: { label: string; path: string
                                 </Link>
                             </li>
                             ))}
+                        <ConnectWallet />
+                        <ThemeSelect />
                         </ul>
                     </div>
                 </div>
 
-            {/* <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setShowMenu(!showMenu)}>
+            {/* FUTURE - MOBILE HAMBURGER MENU */}
+            {/*
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setShowMenu(!showMenu)}>
                 {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
-
-            <div className="hidden md:flex items-center gap-4">
-                <WalletDropdown />
-                <ClusterDropdown />
-                <ThemeSelect />
-            </div>
 
             {showMenu && (
                 <div className="md:hidden fixed inset-x-0 top-[52px] bottom-0 bg-neutral-100/95 dark:bg-neutral-900/95 backdrop-blur-sm">
@@ -68,7 +68,8 @@ export function AppHeader( {links = []} : { links: { label: string; path: string
                     </ul>
                 </div>
                 </div>
-            )} */}
+            )} 
+             */}
             </div>
         </header>
     )

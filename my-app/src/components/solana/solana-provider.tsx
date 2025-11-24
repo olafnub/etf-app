@@ -13,12 +13,6 @@ import { clusterApiUrl } from '@solana/web3.js';
 
 import '@solana/wallet-adapter-react-ui/styles.css';
 
-// https://solana.stackexchange.com/questions/4304/error-hydration-failed-because-the-initial-ui-does-not-match-what-was-rendered
-// const WalletMultiButtonDynamic = dynamic(
-//     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-//     { ssr: false }
-// );
-
 
 export function SolanaProvider( {children}: {children: ReactNode}) {
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
