@@ -29,6 +29,7 @@ export function JupiterSwap() {
   const [token0Usd, setToken0] = useState(0);
   const [token1Usd, setToken1] = useState(0);
 
+  // future https://stackoverflow.com/questions/76263506/best-practice-for-onchange-in-useeffect
   const onInputTokenChange = async (e) => {
     setAmount(e.target.value);
 

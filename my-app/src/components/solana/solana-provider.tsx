@@ -33,7 +33,6 @@ export function SolanaProvider( {children}: {children: ReactNode}) {
             <WalletProvider wallets={[]} autoConnect>
                 <WalletModalProvider>
                     <WalletMultiButtonDynamic />
-                    {/* <WalletDisconnectButton /> */}
                     {children}
                 </WalletModalProvider>
             </WalletProvider>
