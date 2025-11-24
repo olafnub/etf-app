@@ -2,7 +2,6 @@
 // SolanaProvider from https://solana.com/developers/cookbook/wallets/connect-wallet-react
 // Layout from wallet-ui
 'use client';
-import dynamic from 'next/dynamic';
 import { ReactNode, useMemo } from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { 
@@ -15,10 +14,10 @@ import { clusterApiUrl } from '@solana/web3.js';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 // https://solana.stackexchange.com/questions/4304/error-hydration-failed-because-the-initial-ui-does-not-match-what-was-rendered
-const WalletMultiButtonDynamic = dynamic(
-    async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false }
-);
+// const WalletMultiButtonDynamic = dynamic(
+//     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+//     { ssr: false }
+// );
 
 
 export function SolanaProvider( {children}: {children: ReactNode}) {
@@ -32,7 +31,6 @@ export function SolanaProvider( {children}: {children: ReactNode}) {
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={[]} autoConnect>
                 <WalletModalProvider>
-                    <WalletMultiButtonDynamic />
                     {children}
                 </WalletModalProvider>
             </WalletProvider>
