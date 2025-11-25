@@ -2,40 +2,114 @@
 import React, { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { VersionedTransaction } from '@solana/web3.js';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { RefreshCcw, ArrowDownUp, Wallet } from 'lucide-react';
+import Image from 'next/image';
 
 // Make Buffer available globally for browser compatibility
 if (typeof window !== 'undefined' && !window.Buffer) {
   (window as any).Buffer = Buffer;
 }
 
+const SwapHeaderUI = () => {
+  return (
+    <div className="mt-2 h-7 pl-3 pr-2">
+        <div className="w-full flex items-center justify-between">
+          <div className="flex space-x-1 items-center">
+            <Button
+              type="button"
+              className="p-2 h-7 w-7 flex items-center justify-center rounded-full bg-muted text-foreground fill-current hover:bg-muted/80 transition-colors"
+              onClick={() => window.location.reload()}
+            >
+              <RefreshCcw />
+            </Button>
+            <div className="text-foreground">
+              <Button
+                type="button"
+                className="py-2 px-3 h-7 flex items-center rounded-2xl text-xs bg-muted text-foreground hover:bg-muted/80 transition-colors"
+              >
+                <span>Connect Wallet</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+  )
+}
+
+const SwitchTokensButtonUI = () => {
+  return (
+    <div className="relative z-10 -my-3 flex justify-center">
+      <div className="flex justify-center bg-background rounded-full">
+        <Button 
+          className="border-[3px] border-background fill-current text-black bg-muted hover:bg-muted/80 dark:text-foreground dark:hover:border-primary dark:border dark:border-border h-8 w-8 rounded-full flex items-center justify-center cursor-pointer transition-all"
+          onClick={() => {}}
+          >
+          <ArrowDownUp />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+const SwapTokensFormUI = () => {
+  return (
+    <></>
+  )
+}
+
 // Default token mints - Change these to swap different tokens
-// SOL mint address
-const DEFAULT_INPUT_MINT = 'So11111111111111111111111111111111111111112';
+// SOL mint address: So11111111111111111111111111111111111111112
 // USDC mint address
-const DEFAULT_OUTPUT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const DEFAULT_INPUT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+
+// cbBTC mint address
+const DEFAULT_OUTPUT_MINT = 'cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij';
 
 // Jupiter Ultra Swap API endpoints
 const ORDER_API_URL = 'https://lite-api.jup.ag/ultra/v1/order';
 const EXECUTE_API_URL = 'https://lite-api.jup.ag/ultra/v1/execute';
 
+// Token logos
+const USDC_LOGO = "https://image.solanatracker.io/proxy?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsolana-labs%2Ftoken-list%2Fmain%2Fassets%2Fmainnet%2FEPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v%2Flogo.png";
+const CBWBTC_LOGO = "https://ipfs.io/ipfs/QmZ7L8yd5j36oXXydUiYFiFsRHbi3EdgC4RuFwvM7dcqge";
+
+interface OrderData {
+  transaction: string;
+  requestId: string;
+  inUsdValue: number;
+  outUsdValue: number;
+  outAmount: number;
+}
+
 export function JupiterSwap() {
   const { publicKey, signTransaction } = useWallet();
-  const [amount, setAmount] = useState<string>('0.1'); // Default amount in SOL (0.1 SOL)
+  const [amount, setAmount] = useState<string>('');
+  const [outputAmount, setOutputAmount] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   
-  const [orderData, setOrderData] = useState(null);
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [token0Usd, setToken0] = useState(0);
   const [token1Usd, setToken1] = useState(0);
 
   // future https://stackoverflow.com/questions/76263506/best-practice-for-onchange-in-useeffect
-  const onInputTokenChange = async (e) => {
-    setAmount(e.target.value);
+  const onInputTokenChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setAmount(inputValue);
+
+    if (!inputValue || parseFloat(inputValue) <= 0) {
+      setToken0(0);
+      setToken1(0);
+      setOutputAmount('');
+      return;
+    }
 
     // Convert amount to native token units (SOL has 9 decimals)
     // Change this decimal value if swapping different tokens
-    const amountInNativeUnits = Math.floor(parseFloat(amount) * 1_000_000_000);
+    const amountInNativeUnits = Math.floor(parseFloat(inputValue) * 1_000_000_000);
     const randomKey = "GXicFxkjeYk6vX4SvBxdVXNKjCzpsFUMvXdA4VGWAChj";
 
     try {
@@ -66,9 +140,16 @@ export function JupiterSwap() {
         
         setToken0(rounded0);
         setToken1(rounded1);
+        
+        // Calculate output amount (USDC has 6 decimals)
+        const outputValue = orderData.outAmount / 1_000_000;
+        setOutputAmount(outputValue.toFixed(2));
 
     } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred during the swap');
+        setToken0(0);
+        setToken1(0);
+        setOutputAmount('');
     }
   }
 
@@ -76,6 +157,11 @@ export function JupiterSwap() {
   const handleSwap = async () => {
     if (!publicKey || !signTransaction) {
       setError('Please connect your wallet first');
+      return;
+    }
+
+    if (!orderData) {
+      setError('Please enter an amount first');
       return;
     }
 
@@ -121,63 +207,139 @@ export function JupiterSwap() {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Jupiter Swap</h2>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Amount (SOL)
-            {/* Change the label and input handling if swapping different tokens */}
-          </label>
-          <input
-            type="number"
-            value={amount}
-            onChange={onInputTokenChange}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-black dark:text-white"
-            placeholder="0.1"
-            step="0.01"
-            min="0"
-          />
-        </div>
+    <div className="w-full max-w-md mx-auto">
+      <SwapHeaderUI />
 
-        {token0Usd ? (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-                <p>Swapping: SOL ${token0Usd} → USDC ${token1Usd} </p>
+      <section className="">
+        <div className="h-full flex flex-col items-center justify-center">
+          <div className="w-full mt-2 rounded-xl flex flex-col px-2">
+            <div className="flex-col">
+              {/* Selling Section */}
+              <div className="border border-transparent bg-card transition-all py-3 px-4 flex flex-col gap-y-2 group focus-within:border-primary/50 focus-within:shadow-lg rounded-xl">
+                <div className="flex justify-between items-center text-xs text-foreground">
+                  <div>Selling</div>
+                  <div className="flex space-x-1 text-xs items-center text-muted-foreground fill-current cursor-pointer">
+                    <Wallet />
+                    <span>CBWBTC</span>
+                  </div>
+                </div>
+                <div className="flex">
+                  <div>
+                    <button
+                      type="button"
+                      className="py-2 px-3 rounded-lg flex items-center bg-muted text-foreground"
+                      disabled
+                    >
+                      <Image
+                        src={CBWBTC_LOGO}
+                        alt="CBWBTC"
+                        width={20}
+                        height={20}
+                        className="object-cover rounded-full"
+                        style={{ maxWidth: '20px', maxHeight: '20px' }}
+                      />
+                      <div className="ml-4 mr-2 font-semibold" translate="no">
+                        <div className="truncate">CBWBTC</div>
+                      </div>
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-end justify-between w-full">
+                    <Input
+                      inputMode="decimal"
+                      placeholder="0.00"
+                      className="w-full h-[40px] bg-transparent text-foreground text-right font-semibold text-xl placeholder:text-muted-foreground border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      type="text"
+                      value={amount}
+                      onChange={onInputTokenChange}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      ${token0Usd > 0 ? token0Usd.toFixed(2) : '0'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <SwitchTokensButtonUI />
+
+              {/* Buying Section */}
+              <div className="border border-transparent bg-card transition-all py-3 px-4 flex flex-col gap-y-2 group focus-within:border-primary/50 focus-within:shadow-lg rounded-xl">
+                <div className="flex justify-between items-center text-xs text-foreground">
+                  <div>Buying</div>
+                  <div className="flex space-x-1 text-xs items-center text-muted-foreground fill-current cursor-pointer">
+                    <Wallet />
+                    <span>USDC</span>
+                  </div>
+                </div>
+                <div className="flex">
+                  <div>
+                    <button
+                      type="button"
+                      className="py-2 px-3 rounded-lg flex items-center bg-muted text-foreground hover:bg-muted/80 transition-colors"
+                    >
+                          <Image
+                            src={USDC_LOGO}
+                            alt="USDC"
+                            width={20}
+                            height={20}
+                            className="object-cover rounded-full"
+                            style={{ maxWidth: '20px', maxHeight: '20px' }}
+                          />
+                        <div className="ml-4 mr-2 font-semibold" translate="no">
+                          <div className="truncate">USDC</div>
+                        </div>
+                    </button>
+                    <div className="flex justify-between items-center h-[20px]"></div>
+                  </div>
+                  <div className="flex flex-col items-end justify-between w-full">
+                    <Input
+                      inputMode="decimal"
+                      className="h-[40px] w-full bg-transparent text-foreground text-right font-semibold text-lg placeholder:text-muted-foreground border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      placeholder="0.00"
+                      type="text"
+                      value={outputAmount}
+                      readOnly
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      ${token1Usd > 0 ? token1Usd.toFixed(2) : '0'}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-        ) : (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-                <p>Swapping: SOL → USDC </p>
             </div>
-        )}
 
-
-        <button
-          onClick={handleSwap}
-          disabled={loading || !publicKey}
-          className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
-        >
-          {loading ? 'Processing...' : 'Swap'}
+          {/* Action Button */}
+          <div className="w-full px-2">
+            <button
+                  type="button"
+                  onClick={handleSwap}
+                  disabled={loading || !publicKey || !amount || parseFloat(amount) <= 0}
+                  className="rounded-xl relative w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                >
+              <div className="p-5 text-md font-semibold h-full w-full leading-none">
+                {loading ? 'Processing...' : !publicKey ? 'Connect Wallet' : 'Swap'}
+              </div>
         </button>
+          </div>
 
+        {/* Error and Success Messages */}
         {error && (
-          <div className="p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-md text-sm">
-            {error}
+            <div className="w-full px-2 mt-2">
+              <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm">
+                {error}
+              </div>
           </div>
         )}
 
         {success && (
-          <div className="p-3 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-md text-sm">
-            {success}
-          </div>
+            <div className="w-full px-2 mt-2">
+              <div className="p-3 bg-green-500/10 text-green-600 dark:text-green-400 rounded-md text-sm">
+                {success}
+              </div>
+            </div>
         )}
-
-        {!publicKey && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-            Please connect your wallet to swap
-          </p>
-        )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
