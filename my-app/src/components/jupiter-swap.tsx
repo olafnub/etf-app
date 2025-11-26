@@ -230,7 +230,7 @@ export function JupiterSwap() {
           <div className="w-full mt-2 rounded-xl flex flex-col px-2">
             <div className="flex-col">
               {/* Selling Section */}
-              <div className="border border-transparent bg-card transition-all py-3 px-4 flex flex-col gap-y-2 group focus-within:border-red/50 focus-within:shadow-lg rounded-xl">
+              <div className="border border-transparent bg-sell-card transition-all py-3 px-4 flex flex-col gap-y-2 group focus-within:border-primary/50 focus-within:shadow-lg rounded-xl">
                 <SellingHeaderUI />
                 {/* Where drop down should be */}
                 <div className="flex">
@@ -257,6 +257,7 @@ export function JupiterSwap() {
                     <Input
                       id="sellToken"
                       inputMode="decimal"
+                      className=""
                       placeholder="0.00"
                       type="text"
                       value={amount}
@@ -320,11 +321,11 @@ export function JupiterSwap() {
           {/* Action Button */}
           <div className="w-full px-2">
             <button
-                  type="button"
-                  onClick={handleSwap}
-                  disabled={loading || !publicKey || !amount || parseFloat(amount) <= 0}
-                  className="rounded-xl relative w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
-                >
+              type="button"
+              onClick={handleSwap}
+              disabled={loading || !publicKey || !amount || parseFloat(amount) <= 0}
+              className="rounded-xl relative w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+            >
               <div className="p-5 text-md font-semibold h-full w-full leading-none">
                 {loading ? 'Processing...' : !publicKey ? 'Connect Wallet' : 'Swap'}
               </div>

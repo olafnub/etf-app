@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
       data-slot="input"
       autoComplete='off'
       className={cn(
-        "bg-card text-right font-semibold text-xl placeholder:text-muted-foreground border-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none"
+        "text-right font-semibold text-xl placeholder:text-muted-foreground border-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none"
       )}
       {...props}
     />
