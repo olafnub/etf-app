@@ -53,6 +53,18 @@ const SwitchTokensButtonUI = () => {
   )
 }
 
+const SellingHeaderUI = () => {
+  return (
+    <div className="flex justify-between items-center text-xs text-foreground">
+      <p>Selling</p>
+      <div className="flex space-x-1 text-xs items-center text-muted-foreground fill-current cursor-pointer">
+        <Wallet />
+        <span>USDC</span>
+      </div>
+    </div>
+  )
+}
+
 const SwapTokensFormUI = () => {
   return (
     <></>
@@ -62,10 +74,10 @@ const SwapTokensFormUI = () => {
 // Default token mints - Change these to swap different tokens
 // SOL mint address: So11111111111111111111111111111111111111112
 // USDC mint address
-const DEFAULT_INPUT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+let DEFAULT_INPUT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
 // cbBTC mint address
-const DEFAULT_OUTPUT_MINT = 'cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij';
+let DEFAULT_OUTPUT_MINT = 'cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij';
 
 // Jupiter Ultra Swap API endpoints
 const ORDER_API_URL = 'https://lite-api.jup.ag/ultra/v1/order';
@@ -95,9 +107,9 @@ export function JupiterSwap() {
   const [token0Usd, setToken0] = useState(0);
   const [token1Usd, setToken1] = useState(0);
 
-  // future https://stackoverflow.com/questions/76263506/best-practice-for-onchange-in-useeffect
   const onInputTokenChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+    // DEFAULT_INPUT_MINT = "So11111111111111111111111111111111111111112"
     setAmount(inputValue);
 
     if (!inputValue || parseFloat(inputValue) <= 0) {
@@ -109,7 +121,11 @@ export function JupiterSwap() {
 
     // Convert amount to native token units (SOL has 9 decimals)
     // Change this decimal value if swapping different tokens
-    const amountInNativeUnits = Math.floor(parseFloat(inputValue) * 1_000_000_000);
+    let amountInNativeUnits = Math.floor(parseFloat(inputValue) * 1_000_000);
+
+    if (DEFAULT_INPUT_MINT == "So11111111111111111111111111111111111111112") {
+      amountInNativeUnits = Math.floor(parseFloat(inputValue) * 1_000_000_000);
+    }
     const randomKey = "GXicFxkjeYk6vX4SvBxdVXNKjCzpsFUMvXdA4VGWAChj";
 
     try {
@@ -144,7 +160,6 @@ export function JupiterSwap() {
         // Calculate output amount (USDC has 6 decimals)
         const outputValue = orderData.outAmount / 1_000_000;
         setOutputAmount(outputValue.toFixed(2));
-
     } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred during the swap');
         setToken0(0);
@@ -215,14 +230,9 @@ export function JupiterSwap() {
           <div className="w-full mt-2 rounded-xl flex flex-col px-2">
             <div className="flex-col">
               {/* Selling Section */}
-              <div className="border border-transparent bg-card transition-all py-3 px-4 flex flex-col gap-y-2 group focus-within:border-primary/50 focus-within:shadow-lg rounded-xl">
-                <div className="flex justify-between items-center text-xs text-foreground">
-                  <div>Selling</div>
-                  <div className="flex space-x-1 text-xs items-center text-muted-foreground fill-current cursor-pointer">
-                    <Wallet />
-                    <span>CBWBTC</span>
-                  </div>
-                </div>
+              <div className="border border-transparent bg-card transition-all py-3 px-4 flex flex-col gap-y-2 group focus-within:border-red/50 focus-within:shadow-lg rounded-xl">
+                <SellingHeaderUI />
+                {/* Where drop down should be */}
                 <div className="flex">
                   <div>
                     <button
@@ -231,23 +241,23 @@ export function JupiterSwap() {
                       disabled
                     >
                       <Image
-                        src={CBWBTC_LOGO}
-                        alt="CBWBTC"
+                        src={USDC_LOGO}
+                        alt="USDC"
                         width={20}
                         height={20}
                         className="object-cover rounded-full"
                         style={{ maxWidth: '20px', maxHeight: '20px' }}
                       />
                       <div className="ml-4 mr-2 font-semibold" translate="no">
-                        <div className="truncate">CBWBTC</div>
+                        <div className="truncate">USDC</div>
                       </div>
                     </button>
                   </div>
                   <div className="flex flex-col items-end justify-between w-full">
                     <Input
+                      id="sellToken"
                       inputMode="decimal"
                       placeholder="0.00"
-                      className="w-full h-[40px] bg-transparent text-foreground text-right font-semibold text-xl placeholder:text-muted-foreground border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                       type="text"
                       value={amount}
                       onChange={onInputTokenChange}
@@ -267,7 +277,7 @@ export function JupiterSwap() {
                   <div>Buying</div>
                   <div className="flex space-x-1 text-xs items-center text-muted-foreground fill-current cursor-pointer">
                     <Wallet />
-                    <span>USDC</span>
+                    <span>CBWBTC</span>
                   </div>
                 </div>
                 <div className="flex">
@@ -277,7 +287,7 @@ export function JupiterSwap() {
                       className="py-2 px-3 rounded-lg flex items-center bg-muted text-foreground hover:bg-muted/80 transition-colors"
                     >
                           <Image
-                            src={USDC_LOGO}
+                            src={CBWBTC_LOGO}
                             alt="USDC"
                             width={20}
                             height={20}
@@ -285,10 +295,9 @@ export function JupiterSwap() {
                             style={{ maxWidth: '20px', maxHeight: '20px' }}
                           />
                         <div className="ml-4 mr-2 font-semibold" translate="no">
-                          <div className="truncate">USDC</div>
+                          <div className="truncate">CBWBTC</div>
                         </div>
                     </button>
-                    <div className="flex justify-between items-center h-[20px]"></div>
                   </div>
                   <div className="flex flex-col items-end justify-between w-full">
                     <Input
@@ -319,7 +328,7 @@ export function JupiterSwap() {
               <div className="p-5 text-md font-semibold h-full w-full leading-none">
                 {loading ? 'Processing...' : !publicKey ? 'Connect Wallet' : 'Swap'}
               </div>
-        </button>
+            </button>
           </div>
 
         {/* Error and Success Messages */}
@@ -345,3 +354,5 @@ export function JupiterSwap() {
 }
 
 export default JupiterSwap
+
+// future https://stackoverflow.com/questions/76263506/best-practice-for-onchange-in-useeffect

@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased`}>
         <AppProviders>
-          <AppLayout children={children} links={links} />
+          <AppLayout links={links}>{children}</AppLayout>
         </AppProviders>
       </body>
     </html>
