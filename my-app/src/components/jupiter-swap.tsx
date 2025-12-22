@@ -65,12 +65,6 @@ const SellingHeaderUI = () => {
   )
 }
 
-const SwapTokensFormUI = () => {
-  return (
-    <></>
-  )
-}
-
 // Default token mints - Change these to swap different tokens
 // SOL mint address: So11111111111111111111111111111111111111112
 // USDC mint address
@@ -126,7 +120,7 @@ export function JupiterSwap() {
     if (DEFAULT_INPUT_MINT == "So11111111111111111111111111111111111111112") {
       amountInNativeUnits = Math.floor(parseFloat(inputValue) * 1_000_000_000);
     }
-    const randomKey = "GXicFxkjeYk6vX4SvBxdVXNKjCzpsFUMvXdA4VGWAChj";
+    const randomKey = "XicFxkjeYk6vX4SvBxdVXNKjCzpsFUMvXdA4VGWAChj";
 
     try {
         // Step 1: Get order from Jupiter Ultra Swap API
@@ -137,7 +131,7 @@ export function JupiterSwap() {
             `inputMint=${DEFAULT_INPUT_MINT}&` +
             `outputMint=${DEFAULT_OUTPUT_MINT}&` +
             `amount=${amountInNativeUnits}&` +
-            `taker=${randomKey.toString()}`;
+            `taker=${randomKey}`;
         } else {
             orderUrl = `${ORDER_API_URL}?` +
             `inputMint=${DEFAULT_INPUT_MINT}&` +
@@ -145,7 +139,11 @@ export function JupiterSwap() {
             `amount=${amountInNativeUnits}&` +
             `taker=${publicKey.toString()}`;
         }
-    
+
+      // const searchResponse = await fetch(`https://lite-api.jup.ag/ultra/v1/search?query=cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij`);
+      // const searchData = await searchResponse.json();
+      // console.log(searchData);
+      
         const orderResponse = await fetch(orderUrl);
         const orderData = await orderResponse.json();
         setOrderData(orderData);
@@ -185,6 +183,7 @@ export function JupiterSwap() {
     setSuccess(null);
 
     try {
+      // console.log("orderData", orderData)
       // Step 2: Deserialize and sign the transaction
       const transactionBase64 = orderData.transaction;
       const transaction = VersionedTransaction.deserialize(
@@ -194,7 +193,7 @@ export function JupiterSwap() {
       // Sign the transaction using the connected wallet
       const signedTransaction = await signTransaction(transaction);
       const signedTransactionBase64 = Buffer.from(signedTransaction.serialize()).toString('base64');
-
+     
       // Step 3: Execute the swap
       const executeResponse = await fetch(EXECUTE_API_URL, {
         method: 'POST',
@@ -210,7 +209,8 @@ export function JupiterSwap() {
       const executeData = await executeResponse.json();
 
       if (executeData.status === 'Success') {
-        setSuccess(`Swap successful! View on Solscan: https://solscan.io/tx/${executeData.signature}`);
+        setSuccess(`Swapped ${token0Usd}`);
+        // View on Solscan: https://solscan.io/tx/${executeData.signature}
       } else {
         throw new Error(executeData.error || 'Swap execution failed');
       }

@@ -2,6 +2,8 @@
 
 This document outlines the requirements and tech stack recommendations for building a Decentralized Exchange that lets users swap USDC for BTC on Solana and WBTC on Base. The backend fetches swap prices from multiple DEX/AMM aggregators and returns the best available price.
 
+Use privy for wallet sign up
+
 Personal Resources: https://github.com/AlmostEfficient/jupiter-swap
 ---
 
